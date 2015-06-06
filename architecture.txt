@@ -1,0 +1,11 @@
+Threads:
+* Main thread for updating the game world
+* Own threads for all connected clients
+
+Mainloop:
+	* Make run at pre-determined FPS, sleep to burn time is possible
+	* Updates game world
+		* Recalculates accelerations
+		* Moves objects (possible chunk load/unload)
+		* Updates object status (e.g. decreases fuel)
+	* Signals other threads to send relevant updates to the clients
