@@ -30,25 +30,35 @@
 (defun get-chunk (chunk-x chunk-y)
 	(gethash (cons chunk-x chunk-y) *space*))
 
-(defun enter-chunk (ship chunk-x chunk-y)
+(defun require-chunk (chunk-x chunk-y)
 	;; Create the chunk if it doesn't exist yet
 	(unless (chunk-loaded-p chunk-x chunk-y)
 		(generate-chunk chunk-x chunk-y))
 	(let ((chunk (get-chunk chunk-x chunk-y)))
-		;; Add ship to the list of ships
-		(setf (slot-value chunk 'ships) (cons ship (slot-value chunk 'ships)))
 		;; Increase reference count
 		(incf (slot-value chunk 'references))))
 
-(defun leave-chunk (ship chunk-x chunk-y)
+(defun unrequire-chunk (chunk-x chunk-y)
 	(let ((chunk (get-chunk chunk-x chunk-y)))
-		;; Remove ship from the list of ships
-		(setf (slot-value chunk 'ships) (remove ship (slot-value chunk 'ships)))
 		;; Decrease reference count
 		(decf (slot-value chunk 'references))
 		;; When chunk's reference count drops to 0, remove it
 		(when (= (slot-value chunk 'references) 0)
 			(unload-chunk chunk-x chunk-y))))
+
+(defun enter-chunk (ship chunk-x chunk-y)
+	;; Mark that we use this chunk
+	(require-chunk chunk-x chunk-y)
+	(let ((chunk (get-chunk chunk-x chunk-y)))
+		;; Add ship to the list of ships
+		(setf (slot-value chunk 'ships) (cons ship (slot-value chunk 'ships)))))
+
+(defun leave-chunk (ship chunk-x chunk-y)
+	(let ((chunk (get-chunk chunk-x chunk-y)))
+		;; Remove ship from the list of ships
+		(setf (slot-value chunk 'ships) (remove ship (slot-value chunk 'ships))))
+	;; Mark that we no longer use this chunk
+	(unrequire-chunk chunk-x chunk-y))
 
 (defun ships-in-chunk (chunk-x chunk-y)
 	(let ((chunk (get-chunk chunk-x chunk-y)))
