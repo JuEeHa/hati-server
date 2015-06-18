@@ -42,3 +42,13 @@
 		;; Place the ship in the appropriate chunk
 		(enter-chunk ship chunk-x chunk-y)
 		ship))
+
+(defun move-ship (ship new-chunk-x new-chunk-y new-internal-x new-internal-y)
+	(with-slots (chunk-x chunk-y internal-x internal-y) ship
+		(enter-chunk ship new-chunk-x new-chunk-y)
+		(leave-chunk ship chunk-x chunk-y)
+		;; Upgrade position information
+		(setf chunk-x new-chunk-x)
+		(setf chunk-y new-chunk-y)
+		(setf internal-x new-internal-x)
+		(setf internal-y new-internal-y)))
