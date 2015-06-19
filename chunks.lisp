@@ -54,7 +54,7 @@
 		    ((> y *gravity-area-size*))
 			;; Ignore the chunk in the middle (it's handled otherwise)
 			(unless (and (= x 0) (= y 0))
-				(require-chunk x y)))))
+				(require-chunk (+ chunk-x x) (+ chunk-y y))))))
 
 (defun unrequire-gravity-area (chunk-x chunk-y)
 	;; Go through every chunk in the gravity area
@@ -65,7 +65,7 @@
 		    ((> y *gravity-area-size*))
 			;; Ignore the chunk in the middle (it's handled otherwise)
 			(unless (and (= x 0) (= y 0))
-				(unrequire-chunk x y)))))
+				(unrequire-chunk (+ chunk-x x) (+ chunk-y y))))))
 
 (defun enter-chunk (ship chunk-x chunk-y)
 	;; Mark that we use this chunk
