@@ -1,11 +1,24 @@
 Threads:
 * Main thread for updating the game world
+* Listener thread for listening to new connections & spawning new theads for them
 * Own threads for all connected clients
 
 Mainloop:
 	* Make run at pre-determined FPS, sleep to burn time is possible
+	* See if any activity from clients
+		* Modify state accordingly
 	* Updates game world
 		* Recalculates accelerations
-		* Moves objects (possible chunk load/unload)
-		* Updates object status (e.g. decreases fuel)
-	* Signals other threads to send relevant updates to the clients
+		* Update objects:
+			* Moves objects (possible chunk load/unload)
+			* Updates object status (e.g. decreases fuel)
+			* See which threads (if any) are interested in activity where it's located, and signal them of it
+
+Listener:
+	* Listens on incoming connections
+
+Client threads:
+	* Listen to both mainloop and client
+		* Signal from mainloop: marshall & send activity to client
+		* Signal from client: unmarshall & send user's actions to mainloop
+	* PING/PONG
